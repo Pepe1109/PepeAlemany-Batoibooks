@@ -1,21 +1,7 @@
 import data from  './services/datos.js';
-import {
-  getBookById,
-  getBookIndexById,
-  bookExists,
-  booksFromUser,
-  booksFromModule,
-  booksCheeperThan,
-  booksWithStatus,
-  averagePriceOfBooks,
-  booksOfTypeNotes,
-  booksNotSold,
-  incrementPriceOfbooks,
-  getUserById,
-  getUserIndexById,
-  getUserByNickName,
-  getModuleByCode
-} from './functions.js'
+import Modules from "./model/modules.class.js";
+import Users from "./model/users.class.js";
+import Books from "./model/books.class.js";
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -24,6 +10,14 @@ document.querySelector('#app').innerHTML = `
   </div>
 `
 
-console.log(booksFromModule(data.books, "5021"))
-console.log(booksWithStatus(data.books, "new"))
-console.log(incrementPriceOfbooks(data.books, 0.1))
+const modules = new Modules();
+const users = new Users();
+const books = new Books();
+
+modules.populate(data.modules);
+users.populate(data.users);
+books.populate(data.books);
+
+console.log(books.booksFromModule("5021"));
+console.log(books.booksWithStatus("new"));
+console.log(books.incrementPriceOfbooks(0.10));
