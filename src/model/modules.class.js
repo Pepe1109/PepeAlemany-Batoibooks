@@ -1,20 +1,21 @@
 import Module from "./module.class.js";
+import {
+  getDBModules,
+  getModuleByCode
+} from "../services/api.js";
 
 export default class Modules {
   constructor() {
     this.data = [];
   }
 
-  populate(modules) {
-    this.data = modules.map(
-      m => new Module(m.code, m.cliteral, m.vliteral, m.courseId)
-    );
+  async populate() {
+    const modules = await getDBModules();
+    this.data = modules.map(m => new Module(m.code, m.cliteral, m.vliteral, m.courseId));
   }
 
   getModuleByCode(code) {
-    const module = this.data.find(m => m.code === code);
-    if (!module) throw new Error("Module not found");
-    return module;
+    return getModuleByCode(this.data, code);
   }
 
   toString() {

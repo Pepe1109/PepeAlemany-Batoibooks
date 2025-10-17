@@ -1,23 +1,32 @@
-import data from  './services/datos.js';
 import Modules from "./model/modules.class.js";
 import Users from "./model/users.class.js";
 import Books from "./model/books.class.js";
 
-document.querySelector('#app').innerHTML = `
+document.querySelector("#app").innerHTML = `
   <div>
-    <center><img src="./public/logoBatoi.png"></center>
-    <center>Abre la terminal</center
+    <center><img src="./public/logoBatoi.png" alt="Logo Batoi"></center>
+    <center>Abre la terminal</center>
   </div>
-`
+`;
 
-const modules = new Modules();
-const users = new Users();
-const books = new Books();
+async function main() {
+  const modules = new Modules();
+  const users = new Users();
+  const books = new Books();
 
-modules.populate(data.modules);
-users.populate(data.users);
-books.populate(data.books);
+  await modules.populate();
+  await users.populate();
+  await books.populate();
 
-console.log(books.booksFromModule("5021"));
-console.log(books.booksWithStatus("new"));
-console.log(books.incrementPriceOfbooks(0.10));
+  console.log("Libros del módulo 5021:");
+  console.log(books.booksFromModule("5021"));
+
+  console.log("Libros con estado 'new':");
+  console.log(books.booksWithStatus("new"));
+
+  console.log("Precio medio de los libros:");
+  console.log(books.averagePriceOfBooks());
+}
+
+main();
+

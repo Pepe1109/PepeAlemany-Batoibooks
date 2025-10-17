@@ -1,83 +1,94 @@
 import Book from "./book.class.js";
+import {
+  getDBBooks,
+  addDBBook,
+  removeDBBook,
+  changeDBBook,
+  getBookById,
+  getBookIndexById,
+  bookExists,
+  booksFromUser,
+  booksFromModule,
+  booksCheeperThan,
+  booksWithStatus,
+  averagePriceOfBooks,
+  booksOfTypeNotes,
+  booksNotSold,
+} from "../services/api.js";
 
 export default class Books {
   constructor() {
     this.data = [];
   }
 
-  populate(books) {
-    this.data = books.map(book => new Book(book));
+  // Carga todos los libros desde la API
+  async populate() {
+    const books = await getDBBooks();
+    this.data = books.map(b => new Book(b));
   }
 
-  addBook(bookData) {
-    const newId = this.data.reduce((max, u) => Math.max(max, u.id), 0) + 1;
-    const newBook = new Book({ id: newId, ...bookData });
+  // Añade un nuevo libro (espera confirmación de la API)
+  async addBook(bookData) {
+    const added = await addDBBook(bookData);
+    const newBook = new Book(added);
     this.data.push(newBook);
-    return this.data[this.data.length - 1];
+    return newBook;
   }
 
-  removeBook(bookId) {
-    const index = this.getBookIndexById(bookId);
-    this.data.splice(index, 1);
+  // Elimina un libro de la BBDD y del array local
+  async removeBook(bookId) {
+    await removeDBBook(bookId);
+    this.data = this.data.filter(b => b.id !== bookId);
   }
 
-  changeBook(bookData) {
-    const index = this.getBookIndexById(bookData.id);
-    this.data[index] = new Book(bookData);
+  // Modifica un libro existente
+  async changeBook(bookData) {
+    const updated = await changeDBBook(bookData);
+    const index = this.data.findIndex(b => b.id === updated.id);
+    if (index === -1) throw new Error("Book not found");
+    this.data[index] = new Book(updated);
     return this.data[index];
   }
 
+  // Métodos locales reutilizando tus funciones originales
   getBookById(bookId) {
-    const book = this.data.find(b => b.id === bookId);
-    if (!book) throw new Error("Book not found");
-    return book;
+    return getBookById(this.data, bookId);
   }
 
   getBookIndexById(bookId) {
-    const index = this.data.findIndex(b => b.id === bookId);
-    if (index === -1) throw new Error("Book not found");
-    return index;
+    return getBookIndexById(this.data, bookId);
   }
 
   bookExists(userId, moduleCode) {
-    return this.data.some(b => b.userId === userId && b.moduleCode === moduleCode);
+    return bookExists(this.data, userId, moduleCode);
   }
 
   booksFromUser(userId) {
-    return this.data.filter(b => b.userId === userId);
+    return booksFromUser(this.data, userId);
   }
 
   booksFromModule(moduleCode) {
-    return this.data.filter(b => b.moduleCode === moduleCode);
+    return booksFromModule(this.data, moduleCode);
   }
 
   booksCheeperThan(price) {
-    return this.data.filter(b => b.price <= price);
+    return booksCheeperThan(this.data, price);
   }
 
   booksWithStatus(status) {
-    return this.data.filter(b => b.status === status);
+    return booksWithStatus(this.data, status);
   }
 
   averagePriceOfBooks() {
-    if (this.data.length === 0) return "0.00 €";
-    const media = this.data.reduce((acc, b) => acc + b.price, 0) / this.data.length;
-    return media.toFixed(2) + " €";
+    return averagePriceOfBooks(this.data);
   }
 
   booksOfTypeNotes() {
-    return this.data.filter(b => b.publisher === "Apunts");
+    return booksOfTypeNotes(this.data);
   }
 
   booksNotSold() {
-    return this.data.filter(b => b.soldDate === "");
-  }
-
-  incrementPriceOfbooks(percentage) {
-    this.data.forEach(b => {
-      b.price = Number((b.price * (1 + percentage)).toFixed(2));
-    });
-    return this.data;
+    return booksNotSold(this.data);
   }
 
   toString() {

@@ -1,48 +1,64 @@
 import User from "./user.class.js";
+import {
+  getDBUsers,
+  addDBUser,
+  removeDBUser,
+  changeDBUser,
+  changeDBUserPassword,
+  getUserById,
+  getUserIndexById,
+  getUserByNickName,
+} from "../services/api.js";
 
 export default class Users {
   constructor() {
     this.data = [];
   }
 
-  populate(users) {
+  async populate() {
+    const users = await getDBUsers();
     this.data = users.map(u => new User(u.id, u.nick, u.email, u.password));
   }
 
-  addUser(userData) {
-    const newId = this.data.reduce((max, u) => Math.max(max, u.id), 0) + 1;
-    const newUser = new User(newId, userData.nick, userData.email, userData.password);
+  async addUser(userData) {
+    const added = await addDBUser(userData);
+    const newUser = new User(added.id, added.nick, added.email, added.password);
     this.data.push(newUser);
-    return this.data[this.data.length - 1];
+    return newUser;
   }
 
-  removeUser(userId) {
-    const index = this.getUserIndexById(userId);
-    this.data.splice(index, 1);
+  async removeUser(userId) {
+    await removeDBUser(userId);
+    this.data = this.data.filter(u => u.id !== userId);
   }
 
-  changeUser(userData) {
-    const index = this.getUserIndexById(userData.id);
-    this.data[index] = new User(userData.id, userData.nick, userData.email, userData.password);
+  async changeUser(userData) {
+    const updated = await changeDBUser(userData);
+    const index = this.data.findIndex(u => u.id === updated.id);
+    if (index === -1) throw new Error("User not found");
+    this.data[index] = new User(updated.id, updated.nick, updated.email, updated.password);
     return this.data[index];
   }
 
+  async changeUserPassword(userId, newPassword) {
+    const updated = await changeDBUserPassword(userId, newPassword);
+    const index = this.data.findIndex(u => u.id === userId);
+    if (index === -1) throw new Error("User not found");
+    this.data[index].password = updated.password;
+    return this.data[index];
+  }
+
+  // Métodos locales reutilizando tus funciones
   getUserById(userId) {
-    const user = this.data.find(u => u.id === userId);
-    if (!user) throw new Error("User not found");
-    return user;
+    return getUserById(this.data, userId);
   }
 
   getUserIndexById(userId) {
-    const index = this.data.findIndex(u => u.id === userId);
-    if (index === -1) throw new Error("User not found");
-    return index;
+    return getUserIndexById(this.data, userId);
   }
 
   getUserByNickName(nick) {
-    const user = this.data.find(u => u.nick === nick);
-    if (!user) throw new Error("User not found");
-    return user;
+    return getUserByNickName(this.data, nick);
   }
 
   toString() {
