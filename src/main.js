@@ -7,6 +7,15 @@ document.querySelector("#app").innerHTML = `
     <center><img src="./public/logoBatoi.png" alt="Logo Batoi"></center>
     <center>Abre la terminal</center>
   </div>
+
+  <nav>
+    <ul>
+      <li><a href="#list">Ver Libros</a></li>
+      <li><a href="#form">Añadir Libro</a></li>
+      <li><a href="#about">Acerca de...</a></li>
+    </ul>
+  </nav>
+
 `;
 
 async function main() {
