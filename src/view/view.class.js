@@ -1,94 +1,121 @@
 export default class View {
-    constructor() {
-        this.messages = document.getElementById('messages');
-        this.booksList = document.getElementById('list');
-        this.bookForm = document.getElementById('bookForm');
-        this.removeBtn = document.getElementById('btnBorrar');
-        this.removeInput = document.getElementById('idLibro');
+  constructor() {
+    this.messages = document.getElementById("messages");
+    this.booksList = document.getElementById("list");
+    this.bookForm = document.getElementById("bookForm");
+    this.remove = document.getElementById("remove");
+    this.removeBtn = document.getElementById("btnBorrar");
+    this.removeInput = document.getElementById("idLibro");
+    this.about = document.getElementById("about");
+  }
+
+  renderModulesInSelect(modules) {
+    const select = document.getElementById("bookModule");
+    select.innerHTML = "";
+
+    modules.forEach((module) => {
+      const option = document.createElement("option");
+      option.value = module.code;
+      option.textContent = `${module.cliteral} (${module.code})`;
+      select.append(option);
+    });
+  }
+
+  renderBooks(books) {
+
+    console.log("🟣 renderBooks recibe:", books);
+    if (!books || books.length === 0) {
+        console.warn("⚠️ No hay libros que renderizar");
+        return;
     }
 
-    renderModulesInSelect(modules) {
-        const select = document.getElementById('bookModule')
-        select.innerHTML = ''
-        modules.forEach(module => {
-            const newOption = document.createElement('option')
-            newOption.value = module.code
-            newOption.textContent = `${module.cliteral} (${module.code})`
-            select.append(newOption)
-        })
-    }
+    this.booksList.innerHTML = "";
 
-    renderBooks(books) {
-  const listDiv = document.getElementById("list");
-  listDiv.innerHTML = ""; 
+    books.forEach((book) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.setAttribute("data-id", book.id);
 
- 
-  books.forEach(book => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.style.backgroundColor = "#ffb6c1";
-    card.style.padding = "1em";
-    card.style.margin = "1em";
-    card.style.borderRadius = "10px";
-    card.style.textAlign = "center";
-    card.setAttribute("data-id", book.id);
+      const imgSrc = book.photo ? book.photo : "img/default-book.png";
+      const vendido = book.soldDate
+        ? `Vendido el ${book.soldDate}`
+        : "En venta";
 
-    const vendido = book.soldDate
-      ? book.soldDate
-      : "En venta";
+      card.innerHTML = `
+        <img src="${imgSrc}" alt="Libro: ${book.id}">
+        <div>
+          <h3>${book.moduleCode} (${book.id})</h3>
+          <h4>${book.publisher}</h4>
+          <p>${book.pages} páginas</p>
+          <p>Estado: ${book.status}</p>
+          <p>${vendido}</p>
+          <p>${book.comments || ""}</p>
+          <h4><strong>${book.price.toFixed(2)} €</strong></h4>
+        </div>
+      `;
 
-    card.innerHTML = `
-      <h3>Libro ${book.id}</h3>
-      <h4><strong>${book.moduleCode}</strong> (${book.id})</h4>
-      <h4>${book.publisher}</h4>
-      <p>${book.pages} páginas</p>
-      <p>Estado: ${book.status}</p>
-      <p>${vendido}</p>
-      <p>${book.comments ? book.comments : ""}</p>
-      <h4><strong>${book.price.toFixed(2)} €</strong></h4>
+      this.booksList.append(card);
+    });
+
+  }
+
+  deleteBook(book) {
+    const bookCard = this.booksList.querySelector(`[data-id="${book.id}"]`);
+    if (bookCard) bookCard.remove();
+  }
+
+
+  renderMessage(type, message) {
+    const newMessage = document.createElement("div");
+
+    const alertClass =
+      type === "error" ? "alert-danger" : "alert-info";
+
+    newMessage.className = `alert ${alertClass} alert-dismissible`;
+    newMessage.role = "alert";
+
+    newMessage.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
     `;
 
-    listDiv.appendChild(card);
-  });
-}
+    this.messages.append(newMessage);
 
 
-    deleteBook(book) {
-        const bookCard = this.booksList.querySelector(`[data-id="${book.id}"]`);
-        if (bookCard) {
-            this.booksList.removeChild(bookCard);
-        }
+    if (type !== "error") {
+      setTimeout(() => {
+        if (newMessage.parentElement) newMessage.remove();
+      }, 3000);
     }
+  }
 
-    renderMessage(type, message) {
-        const newMessage = document.createElement('div')
-        newMessage.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="this.parentElement.remove()">x</button>
-        `
-        this.messages.append(newMessage)
-    }
+  setBookSubmitHandler(callback) {
+    this.bookForm.addEventListener("submit", (event) => {
+      event.preventDefault();
 
-    setBookSubmitHandler(callback) {  
-        this.bookForm.addEventListener('submit', (event) => {
-            event.preventDefault()
-            // a continuación recoge los datos del formulario y los guarda en un objeto
-            // por último llama a la función recibida pasándole dicho objeto
-            const payload = {
-                id: this.bookForm['idLibro'].value,
-                title: this.bookForm['titulo'].value,
-                author: this.bookForm['autor'].value,
-                year: this.bookForm['anio'].value
-            }
-            callback(payload)
-        })
-    }
+      const payload = {
+        title: this.bookForm["titulo"].value,
+        author: this.bookForm["autor"].value,
+        year: this.bookForm["anio"].value,
+        moduleCode: this.bookForm["bookModule"].value,
+        publisher: this.bookForm["editorial"].value,
+        pages: Number(this.bookForm["paginas"].value),
+        status: this.bookForm["estado"].value,
+        price: Number(this.bookForm["precio"].value),
+        comments: this.bookForm["comentarios"].value,
+        soldDate: "",
+      };
 
-    setBookRemoveHandler(handleRemoveBook) {
-        document.getElementById('btnBorrar').addEventListener('click', () => {
-        const idToRemove = document.getElementById('idLibro').value
-        handleRemoveBook(idToRemove)
-    })
-}
+      callback(payload);
+      this.bookForm.reset();
+    });
+  }
 
+  setBookRemoveHandler(callback) {
+    this.removeBtn.addEventListener("click", () => {
+      const idToRemove = this.removeInput.value;
+      callback(idToRemove);
+      this.removeInput.value = "";
+    });
+  }
 }

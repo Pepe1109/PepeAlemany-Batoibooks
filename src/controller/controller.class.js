@@ -13,36 +13,46 @@ export default class Controller {
     }
 
     async init() {
-
-        try {await Promise.all([
+        console.log("🟢 Controller iniciado");
+        try {
+            await Promise.all([
                 this.users.populate(),
                 this.books.populate(),
                 this.modules.populate()
             ])
+            console.log("🟢 Datos cargados:", this.books.data.length, "libros");
+            console.log(this.books.data)
+            console.log(document.getElementById('list'))
+
+
+            this.view.renderModulesInSelect(this.modules.data)
+            this.view.renderBooks(this.books.data)
+
+            this.view.setBookSubmitHandler(this.handleSubmitBook.bind(this))
+            this.view.setBookRemoveHandler(this.handleRemoveBook.bind(this))
+
         } catch (error) {
-            this.view.renderMessage('error', 'Error de BBDD: '+ error)
+            this.view.renderMessage('error', 'Error cargando datos: ' + error)
         }
-
-        this.view.renderModulesInSelect(this.modules.data)
-        this.view.renderBooks(this.books.data)
-
-        this.view.setBookSubmitHandler(this.handleSubmitBook.bind(this));
-        this.view.setBookRemoveHandler(this.handleRemoveBook.bind(this));
     }
 
-    handleSubmitBook(payload) {
-        this.book(addDBBook(payload))
-        renderBooks(books)
+    async handleSubmitBook(payload) {
+        try {
+            const newBook = await this.books.addBook(payload)
+            this.view.renderBooks(this.books.data)
+            this.view.renderMessage('info', 'Libro añadido correctamente')
+        } catch (error) {
+            this.view.renderMessage('error', 'Error al añadir el libro: ' + error.message)
+        }
     }
 
     async handleRemoveBook(idToRemove) {
         try {
-            await this.books.removeBook(idToRemove);
-            this.view.removeBookFromList(idToRemove);
+            await this.books.removeBook(idToRemove)
+            this.view.renderBooks(this.books.data) 
+            this.view.renderMessage('info', `Libro ${idToRemove} eliminado correctamente`)
         } catch (error) {
-            renderMessage('error', 'No se ha podido borrar el libro')
+            this.view.renderMessage('error', 'No se ha podido borrar el libro: ' + error.message)
         }
     }
-
-
 }
