@@ -48,10 +48,12 @@ export default class Users {
     return this.data[index];
   }
 
-  // Métodos locales reutilizando tus funciones
-  getUserById(userId) {
-    return getUserById(this.data, userId);
+  async getUserById(userId) {
+    const user = await this.data.find(u => u.id === userId);
+    if (!user) throw new Error("User not found");
+    return user;
   }
+
 
   getUserIndexById(userId) {
     return getUserIndexById(this.data, userId);

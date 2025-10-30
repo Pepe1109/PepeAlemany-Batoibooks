@@ -98,7 +98,7 @@ export async function getDBUsers() {
 
 export async function getDBUser(userId) {
   const res = await fetch(`${BASE_URL}/users/${userId}`);
-  if (!res.ok) throw new Error("User not found");
+  if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
 
@@ -133,10 +133,11 @@ export async function changeDBUserPassword(id, newPassword) {
   return changeDBUser(user);
 }
 
-export function getUserById(users, userId) {
-  const user = users.find(user => user.id === userId);
+export async function getUserById(userId) {
+  const user = await getDBUser(userId);
   if (!user) throw new Error("User not found");
-  return user;
+  const newUser = new User(user.id, user.nick, user.email, user.password);
+  return newUser;
 }
 
 export function getUserIndexById(users, userId) {
