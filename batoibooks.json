@@ -2126,65 +2126,161 @@
     }
   ],
   "books": [
-    {
-      "userId": 3,
-      "moduleCode": "5021",
-      "publisher": "McGraw-Hill",
-      "price": 75,
-      "pages": 273,
-      "status": "new",
-      "photo": "",
-      "comments": "Sense obrir",
-      "soldDate": "",
-      "id": "6"
-    },
-    {
-      "userId": 4,
-      "moduleCode": "5021",
-      "publisher": "McGraw-Hill",
-      "price": 15,
-      "pages": 173,
-      "status": "bad",
-      "photo": "",
-      "comments": "Fet pols",
-      "soldDate": "",
-      "id": "7"
-    },
-    {
-      "userId": 4,
-      "moduleCode": "5025",
-      "publisher": "McGraw-Hill",
-      "price": 15,
-      "pages": 173,
-      "status": "good",
-      "photo": "",
-      "comments": "",
-      "soldDate": "",
-      "id": "8"
-    },
-    {
-      "userId": 4,
-      "moduleCode": "5025",
-      "publisher": "Apunts",
-      "price": 35,
-      "pages": 73,
-      "status": "good",
-      "photo": "",
-      "comments": "",
-      "soldDate": "",
-      "id": "9"
-    },
-    {
-      "userId": 5,
-      "moduleCode": "5021",
-      "publisher": "Apunts",
-      "price": 5,
-      "pages": 57,
-      "status": "good",
-      "photo": "",
-      "comments": "",
-      "soldDate": "",
-      "id": "10"
-    }
-  ]
+  {
+    "userId": 4,
+    "moduleCode": "5025",
+    "publisher": "McGraw-Hill",
+    "price": 15,
+    "pages": 173,
+    "status": "good",
+    "photo": "",
+    "comments": "En buen estado, poco uso",
+    "soldDate": "",
+    "id": "8"
+  },
+  {
+    "userId": 4,
+    "moduleCode": "5025",
+    "publisher": "Apunts",
+    "price": 35,
+    "pages": 73,
+    "status": "good",
+    "photo": "",
+    "comments": "Notas de clase muy completas",
+    "soldDate": "",
+    "id": "9"
+  },
+  {
+    "userId": 5,
+    "moduleCode": "5021",
+    "publisher": "Apunts",
+    "price": 5,
+    "pages": 57,
+    "status": "good",
+    "photo": "",
+    "comments": "Versión antigua pero útil",
+    "soldDate": "",
+    "id": "10"
+  },
+  {
+    "userId": 2,
+    "moduleCode": "5030",
+    "publisher": "McGraw-Hill",
+    "price": 42,
+    "pages": 312,
+    "status": "good",
+    "photo": "",
+    "comments": "Perfecto estado, casi nuevo",
+    "soldDate": "2025-03-12",
+    "id": "11"
+  },
+  {
+    "userId": 3,
+    "moduleCode": "5023",
+    "publisher": "Oxford",
+    "price": 22.5,
+    "pages": 254,
+    "status": "bad",
+    "photo": "",
+    "comments": "Cubierta algo desgastada",
+    "soldDate": "",
+    "id": "12"
+  },
+  {
+    "userId": 1,
+    "moduleCode": "5019",
+    "publisher": "Pearson",
+    "price": 18,
+    "pages": 198,
+    "status": "good",
+    "photo": "",
+    "comments": "Incluye resúmenes y ejercicios",
+    "soldDate": "2025-01-30",
+    "id": "13"
+  },
+  {
+    "userId": 5,
+    "moduleCode": "5028",
+    "publisher": "Apunts",
+    "price": 10,
+    "pages": 90,
+    "status": "good",
+    "photo": "",
+    "comments": "Apuntes completos y limpios",
+    "soldDate": "",
+    "id": "14"
+  },
+  {
+    "userId": 4,
+    "moduleCode": "5018",
+    "publisher": "Santillana",
+    "price": 8,
+    "pages": 120,
+    "status": "bad",
+    "photo": "",
+    "comments": "Faltan algunas páginas",
+    "soldDate": "",
+    "id": "15"
+  },
+  {
+    "userId": 2,
+    "moduleCode": "5031",
+    "publisher": "McGraw-Hill",
+    "price": 27,
+    "pages": 270,
+    "status": "good",
+    "photo": "",
+    "comments": "Muy bien cuidado",
+    "soldDate": "2025-06-15",
+    "id": "16"
+  },
+  {
+    "userId": 3,
+    "moduleCode": "5022",
+    "publisher": "Anaya",
+    "price": 12,
+    "pages": 150,
+    "status": "good",
+    "photo": "",
+    "comments": "Subrayado en lápiz",
+    "soldDate": "",
+    "id": "17"
+  },
+  {
+    "userId": 1,
+    "moduleCode": "5020",
+    "publisher": "Apunts",
+    "price": 6,
+    "pages": 65,
+    "status": "bad",
+    "photo": "",
+    "comments": "Apuntes antiguos, aún válidos",
+    "soldDate": "",
+    "id": "18"
+  },
+  {
+    "userId": 2,
+    "moduleCode": "5032",
+    "publisher": "McGraw-Hill",
+    "price": 45,
+    "pages": 355,
+    "status": "good",
+    "photo": "",
+    "comments": "Sin marcas ni daños",
+    "soldDate": "2025-05-01",
+    "id": "19"
+  },
+  {
+    "userId": 3,
+    "moduleCode": "5024",
+    "publisher": "Apunts",
+    "price": 20,
+    "pages": 180,
+    "status": "good",
+    "photo": "",
+    "comments": "Contiene ejemplos resueltos",
+    "soldDate": "",
+    "id": "20"
+  }
+]
 }

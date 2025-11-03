@@ -23,6 +23,7 @@ export default class View {
 
   renderBooks(books) {
 
+    // Verificaciones con ayuda del chat para saber que error había al renderizar los libros
     console.log("🟣 renderBooks recibe:", books);
     if (!books || books.length === 0) {
         console.warn("⚠️ No hay libros que renderizar");
@@ -68,8 +69,7 @@ export default class View {
   renderMessage(type, message) {
     const newMessage = document.createElement("div");
 
-    const alertClass =
-      type === "error" ? "alert-danger" : "alert-info";
+    const alertClass = type === "error" ? "alert-danger" : "alert-info";
 
     newMessage.className = `alert ${alertClass} alert-dismissible`;
     newMessage.role = "alert";
@@ -80,7 +80,6 @@ export default class View {
     `;
 
     this.messages.append(newMessage);
-
 
     if (type !== "error") {
       setTimeout(() => {

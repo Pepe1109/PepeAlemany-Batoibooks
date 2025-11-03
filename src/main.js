@@ -4,7 +4,7 @@ import Controller from './controller/controller.class.js'
 // Renderizado base del HTML
 document.querySelector('#app').innerHTML = `
   <header>
-    <img src="public/logoBatoi.png" class="logo" alt="Batoi logo" />
+    <img src="/logoBatoi.png" class="logo" alt="Batoi logo" />
     <h1>BatoiBooks</h1>
   </header>
 
