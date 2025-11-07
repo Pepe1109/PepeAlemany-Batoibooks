@@ -29,22 +29,31 @@ export default class Books {
 
   // Añade un nuevo libro (espera confirmación de la API)
   async addBook(bookData) {
-    const added = await addDBBook(bookData);
-    const newBook = new Book(added);
-    this.data.push(newBook);
-    return newBook;
-  }
+  const maxId = this.data.length > 0
+    ? Math.max(...this.data.map(b => Number(b.id) || 0))
+    : 0;
+
+  const newId = String(maxId + 1);
+  const newBookData = { ...bookData, id: newId };
+  const added = await addDBBook(newBookData);
+  const newBook = new Book(added);
+  this.data.push(newBook);
+
+  return newBook;
+}
+
 
 // Elimina un libro de la BBDD y del array local
   async removeBook(id) {
-    const numId = Number(id);
-    await removeDBBook(numId);
-    const index = this.data.findIndex(book => Number(book.id) === numId);
-    if (index === -1) throw new Error(`Book not found (id: ${numId})`);
-    this.data.splice(index, 1);
-  }
+  const numId = Number(id);
 
+  await removeDBBook(numId);
 
+  const index = this.data.findIndex(book => Number(book.id) === numId);
+  if (index === -1) throw new Error(`Book not found (id: ${numId})`);
+
+  this.data.splice(index, 1);
+}
 
   // Modifica un libro existente
   async changeBook(bookData) {
