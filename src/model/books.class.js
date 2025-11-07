@@ -36,14 +36,14 @@ export default class Books {
   }
 
 // Elimina un libro de la BBDD y del array local
-async removeBook(id) {
-  const numId = Number(id);
-  const index = this.data.findIndex(book => book.id === numId);
-  if (index === -1) throw new Error(`Book not found (id: ${numId})`);
+  async removeBook(id) {
+    const numId = Number(id);
+    await removeDBBook(numId);
+    const index = this.data.findIndex(book => Number(book.id) === numId);
+    if (index === -1) throw new Error(`Book not found (id: ${numId})`);
+    this.data.splice(index, 1);
+  }
 
-  await removeDBBook(numId); // 👈 llama a la API real
-  this.data.splice(index, 1);
-}
 
 
   // Modifica un libro existente
@@ -57,8 +57,12 @@ async removeBook(id) {
 
   // Métodos locales reutilizando tus funciones originales
   getBookById(bookId) {
-    return getBookById(this.data, bookId);
+    const numId = Number(bookId);
+    const book = this.data.find(b => Number(b.id) === numId);
+    if (!book) throw new Error(`Book not found (id: ${numId})`);
+    return book;
   }
+
 
   getBookIndexById(bookId) {
     return getBookIndexById(this.data, bookId);

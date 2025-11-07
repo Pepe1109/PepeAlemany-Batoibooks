@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000"; //cambio a la URL de la API para Despliegue
+const BASE_URL = "http://localhost:3000";
 
 /* ─────────────────────────────────────────────
    📚 BOOKS
