@@ -6,7 +6,6 @@ import {
   changeDBBook,
   getBookById,
   getBookIndexById,
-  bookExists,
   booksFromUser,
   booksFromModule,
   booksCheeperThan,
@@ -21,41 +20,31 @@ export default class Books {
     this.data = [];
   }
 
-  // Carga todos los libros desde la API
   async populate() {
     const books = await getDBBooks();
     this.data = books.map(b => new Book(b));
   }
 
-  // Añade un nuevo libro (espera confirmación de la API)
   async addBook(bookData) {
-  const maxId = this.data.length > 0
-    ? Math.max(...this.data.map(b => Number(b.id) || 0))
-    : 0;
+    const maxId = this.data.length > 0
+      ? Math.max(...this.data.map(b => Number(b.id) || 0))
+      : 0;
+    const newId = String(maxId + 1);
+    const newBookData = { ...bookData, id: newId };
+    const added = await addDBBook(newBookData);
+    const newBook = new Book(added);
+    this.data.push(newBook);
+    return newBook;
+  }
 
-  const newId = String(maxId + 1);
-  const newBookData = { ...bookData, id: newId };
-  const added = await addDBBook(newBookData);
-  const newBook = new Book(added);
-  this.data.push(newBook);
-
-  return newBook;
-}
-
-
-// Elimina un libro de la BBDD y del array local
   async removeBook(id) {
-  const numId = Number(id);
+    const numId = Number(id);
+    await removeDBBook(numId);
+    const index = this.data.findIndex(book => Number(book.id) === numId);
+    if (index === -1) throw new Error(`Book not found (id: ${numId})`);
+    this.data.splice(index, 1);
+  }
 
-  await removeDBBook(numId);
-
-  const index = this.data.findIndex(book => Number(book.id) === numId);
-  if (index === -1) throw new Error(`Book not found (id: ${numId})`);
-
-  this.data.splice(index, 1);
-}
-
-  // Modifica un libro existente
   async changeBook(bookData) {
     const updated = await changeDBBook(bookData);
     const index = this.data.findIndex(b => b.id === updated.id);
@@ -64,7 +53,6 @@ export default class Books {
     return this.data[index];
   }
 
-  // Métodos locales reutilizando tus funciones originales
   getBookById(bookId) {
     const numId = Number(bookId);
     const book = this.data.find(b => Number(b.id) === numId);
@@ -72,13 +60,15 @@ export default class Books {
     return book;
   }
 
-
   getBookIndexById(bookId) {
     return getBookIndexById(this.data, bookId);
   }
 
-  bookExists(userId, moduleCode) {
-    return bookExists(this.data, userId, moduleCode);
+  async bookExists(userId, moduleCode) {
+    const response = await fetch(`http://localhost:3000/books?userId=${userId}&moduleCode=${moduleCode}`);
+    if (!response.ok) throw new Error("Error al comprobar libro existente");
+    const data = await response.json();
+    return data.length > 0;
   }
 
   booksFromUser(userId) {

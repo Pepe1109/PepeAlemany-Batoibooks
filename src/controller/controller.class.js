@@ -23,7 +23,6 @@ export default class Controller {
         this.cart.populate()
       ]);
 
-      console.log("🟢 Datos cargados:", this.books.data.length, "libros");
       this.view.renderModulesInSelect(this.modules.data);
       this.view.renderBooks(this.books.data);
 
@@ -31,10 +30,10 @@ export default class Controller {
         onAddBook: this.handleAddOrEditSubmit.bind(this),
         onRemoveBook: this.handleRemoveBook.bind(this),
         onEditBook: this.handleEditAction.bind(this),
-        onAddToCart: this.handleAddToCart.bind(this)
+        onAddToCart: this.handleAddToCart.bind(this),
+        onModuleChange: this.handleModuleChange.bind(this) // 🔹 nuevo
       });
 
-      console.log("🟢 Handlers registrados");
     } catch (error) {
       console.error(error);
       this.view.renderMessage('error', 'Error cargando datos: ' + (error.message || error));
@@ -63,7 +62,6 @@ export default class Controller {
     try {
       if (typeof arg === 'number' || typeof arg === 'string') {
         const id = Number(arg);
-        console.log("✏️ Preparando edición para id:", id);
         const book = this.books.getBookById(id);
         if (!book || !book.id) throw new Error(`Book not found (${id})`);
         this.view.fillForm(book);
@@ -71,14 +69,12 @@ export default class Controller {
       }
 
       if (typeof arg === 'object' && arg !== null) {
-        console.log("✏️ Recibido payload de edición:", arg);
         await this.handleAddOrEditSubmit(arg);
         return;
       }
 
       throw new Error('Argumento no válido para edición');
     } catch (error) {
-      console.error("Error en handleEditAction:", error);
       this.view.renderMessage('error', 'No se pudo preparar la edición: ' + (error.message || error));
     }
   }
@@ -86,7 +82,6 @@ export default class Controller {
   async handleRemoveBook(bookId) {
     try {
       const id = Number(bookId);
-      console.log("🗑️ handleRemoveBook llamado con id:", id);
       const book = this.books.getBookById(id);
       const confirmMsg = `¿Seguro que deseas eliminar el libro con id ${id} (${book.moduleCode || 'N/A'})?`;
       if (!window.confirm(confirmMsg)) return;
@@ -96,7 +91,6 @@ export default class Controller {
       this.view.renderBooks(this.books.data);
       this.view.renderMessage('info', `Libro ${id} eliminado correctamente`);
     } catch (error) {
-      console.error("Error en handleRemoveBook:", error);
       this.view.renderMessage('error', 'No se ha podido borrar el libro: ' + (error.message || error));
     }
   }
@@ -104,14 +98,22 @@ export default class Controller {
   async handleAddToCart(bookId) {
     try {
       const id = Number(bookId);
-      console.log("🛒 handleAddToCart llamado con id:", id);
       const book = this.books.getBookById(id);
       if (!book || !book.id) throw new Error('Book not found (' + id + ')');
       this.cart.addItem(book);
       this.view.renderMessage('info', `Libro ${id} añadido al carrito`);
     } catch (error) {
-      console.error("Error en handleAddToCart:", error);
       this.view.renderMessage('error', error.message || 'Error al añadir al carrito');
+    }
+  }
+
+  async handleModuleChange(moduleCode) {
+    const userId = 2; // usuario actual
+    try {
+      const exists = await this.books.bookExists(userId, moduleCode);
+      this.view.setModuleValidity(exists);
+    } catch (error) {
+      this.view.renderMessage("error", "Error al comprobar el módulo");
     }
   }
 }

@@ -2290,6 +2290,17 @@
       "status": "good",
       "comments": "Prácticamente nuevo",
       "soldDate": ""
+    },
+    {
+      "id": "16",
+      "userId": 2,
+      "moduleCode": "0012",
+      "publisher": "McGraw-Hill",
+      "price": 70,
+      "pages": 220,
+      "status": "bad",
+      "comments": "Tapa desgastada",
+      "soldDate": ""
     }
   ]
 }
