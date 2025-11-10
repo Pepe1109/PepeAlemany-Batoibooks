@@ -18,7 +18,6 @@ export default class View {
     this.idDiv.style.display = "none";
     this.bookForm.prepend(this.idDiv);
 
-    // 🔹 callbacks (los establecerá el controller)
     this.onAddBook = null;
     this.onRemoveBook = null;
     this.onEditBook = null;
@@ -71,7 +70,6 @@ export default class View {
         </div>
       `;
 
-      // 🎯 Eventos de los botones
       card.querySelector(".add-cart").addEventListener("click", () => {
         if (this.onAddToCart) this.onAddToCart(book.id);
       });
@@ -106,6 +104,33 @@ export default class View {
     this.idDiv.style.display = "none";
   }
 
+  // ✅ Validación HTML5 del formulario
+  validateForm() {
+    const priceInput = this.bookForm.querySelector('[name="price"]');
+    const pagesInput = this.bookForm.querySelector('[name="pages"]');
+
+    // Validaciones personalizadas
+    if (priceInput.value < 0) {
+      priceInput.setCustomValidity("El precio no puede ser negativo.");
+    } else {
+      priceInput.setCustomValidity("");
+    }
+
+    if (pagesInput.value < 0 || !Number.isInteger(Number(pagesInput.value))) {
+      pagesInput.setCustomValidity("Las páginas deben ser un número entero positivo.");
+    } else {
+      pagesInput.setCustomValidity("");
+    }
+
+    // Validación global
+    if (!this.bookForm.checkValidity()) {
+      this.bookForm.reportValidity();
+      return false;
+    }
+
+    return true;
+  }
+
   renderMessage(type, message) {
     const newMessage = document.createElement("div");
     const alertClass = type === "error" ? "alert-danger" : "alert-info";
@@ -128,6 +153,12 @@ export default class View {
 
     this.bookForm.addEventListener("submit", (event) => {
       event.preventDefault();
+
+      // 🚨 Validación antes de enviar
+      if (!this.validateForm()) {
+        this.renderMessage("error", "Por favor, corrige los campos del formulario.");
+        return;
+      }
 
       const payload = {
         id: Number(this.bookForm["bookId"].value) || null,
